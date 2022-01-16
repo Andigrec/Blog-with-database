@@ -17,8 +17,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://Andigrec:Test123@cluster0.mppkv.mongodb.net/blogDB", {useNewUrlParser: true});
-// mongoose.connect("mongodb://localhost:27017/blogDB", {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/blogDB", {useNewUrlParser: true});
 
 const postSchema = {
   title: String,
@@ -90,6 +89,47 @@ app.get('/posts/:postName', function(req, res){
       });
     }
   });
+});
+
+app.get('/posts/:postName/modify', function(req, res){
+  Post.find({}, function(err, posts){
+    if (err){
+      console.log(err);
+    } else {
+        posts.forEach(function(post){
+          if ((_.lowerCase(req.params.postName)) === (_.lowerCase(post.title))) {
+            res.render("modify", {
+              title: post.title,
+              content: post.content
+          });
+        }
+      });
+    }
+  });
+});
+
+app.post('/posts/:postName/modify', function(req, res){
+  Post.find({}, function(err, posts){
+    if (err){
+      console.log(err);
+    } else {
+        posts.forEach(function(post){
+          if ((_.lowerCase(req.params.postName)) === (_.lowerCase(post.title))) {
+          console.log(post.title);
+          console.log(post.content);
+          // Post.update({
+          //     title: post.title
+          //   }, {$set: {title: req.body.postTitle,
+          //         content: req.body.postBody}}, function(err){
+          //   if (err){
+          //     console.log(err);
+          //   } else res.redirect("/");
+          // });
+        }
+      })
+    }
+  })
+
 });
 
 let port = process.env.PORT;
